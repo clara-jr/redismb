@@ -1,0 +1,35 @@
+{
+  "name": "redis-message-broker",
+  "version": "1.0.0",
+  "description": "Simplifying microservices communication with efficient event-driven architecture powered by Redis Streams",
+  "keywords": [
+    "redis",
+    "streams",
+    "events",
+    "messages",
+    "queue",
+    "consumer",
+    "publisher",
+    "microservices"
+  ],
+  "license": "ISC",
+  "author": "Clara Jiménez Recio",
+  "main": "index.js",
+  "scripts": {
+    "lint": "npx eslint . --ext js,json",
+    "lint:fix": "npx eslint . --ext js,json --fix",
+    "lint:quiet": "npx eslint . --ext js,json --quiet"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-json-format": "^2.0.1",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-promise": "^6.1.1"
+  },
+  "engines": {
+    "node": ">=20.11.0",
+    "npm": ">=10.2.4"
+  }
+}
