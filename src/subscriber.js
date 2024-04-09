@@ -266,7 +266,7 @@ export default class Subscriber {
         data,
         date: new Date(+msg[0].split('-')[0]),
         clientId: this.clientId,
-        group: value[2] // Unique group that should consume the message (if provided)
+        group: value[3] // Unique group that should consume the message (if provided)
       };
     });
   };

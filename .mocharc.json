@@ -1,0 +1,9 @@
+{
+  "recursive": true,
+  "ui": "bdd",
+  "reporter": "spec",
+  "globals": "projection",
+  "timeout": 30000,
+  "growl": true,
+  "exit": true
+}

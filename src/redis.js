@@ -6,8 +6,9 @@ let redis;
  * Set redis connection.
  *
  * @param {string} redisUri   Redis uri.
+ * @param {number} [ttl]      Seconds waiting until Redis is connected.
  */
-async function bootstrap (redisUri) {
+async function bootstrap (redisUri, ttl = 30) {
   let ready = false;
 
   redis = new Redis(redisUri);
@@ -21,13 +22,13 @@ async function bootstrap (redisUri) {
   });
 
   // Wait until redis is ready so the connection is not used before it is established
-  let wait = 30;
+  let wait = ttl;
   const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   /* eslint-disable no-unmodified-loop-condition */
   while (!ready) {
     await _sleep(1000);
     if (--wait < 1) {
-      throw new Error('TIMEOUT', 'Redis is not connecting (waited for 30 seconds)');
+      throw new Error('TIMEOUT', `Redis is not connecting (waited for ${wait} seconds)`);
     }
   }
 
@@ -37,8 +38,8 @@ async function bootstrap (redisUri) {
 /**
  * Terminate redis connection.
  */
-function stop () {
-  if (redis) redis.quit();
+async function stop () {
+  if (redis) return await redis.quit();
 }
 
 /**
@@ -94,7 +95,7 @@ async function readRejectedMessages ({ ids, from, to, action, all }) {
  */
 async function reprocessRejectedMessages ({ messages, ids, from, to, action, all }) {
   ids = ids || messages?.map(({ id }) => id);
-  const messagesToReprocess = await readRejectedMessages({ ids, from, to, action, all });
+  const { messages: messagesToReprocess } = await readRejectedMessages({ ids, from, to, action, all });
   const succeeded = [];
   const failed = [];
 
@@ -108,7 +109,7 @@ async function reprocessRejectedMessages ({ messages, ids, from, to, action, all
       const { id, action, data, group, channel } = message;
 
       // Send message to channel indicating the consumer group
-      await redis.xadd(channel, '*', action, JSON.stringify(data), group);
+      await redis.xadd(channel, '*', action, JSON.stringify(data), 'group', group);
 
       // Delete message from rejections channel after processing
       await redis.xdel('rejections', id);
