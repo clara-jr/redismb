@@ -1,4 +1,4 @@
-import { redis } from './redis.js';
+import { redis } from './redismb.js';
 
 export default class Publisher {
   /**

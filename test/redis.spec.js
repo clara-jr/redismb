@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import Redis from 'ioredis';
-import redismb from '../src/redis.js';
+import redismb from '../src/redismb.js';
 
 describe('Redis Client Functions', () => {
   afterEach(() => {
