@@ -14,11 +14,15 @@
   ],
   "license": "ISC",
   "author": "Clara Jiménez Recio",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "lint": "npx eslint . --ext js,json",
     "lint:fix": "npx eslint . --ext js,json --fix",
     "lint:quiet": "npx eslint . --ext js,json --quiet"
+  },
+  "dependencies": {
+    "ioredis": "^5.3.2"
   },
   "devDependencies": {
     "eslint": "^8.57.0",
