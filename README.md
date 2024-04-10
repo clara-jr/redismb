@@ -49,7 +49,7 @@ const data = { foo: 'bar' };
 await publisher.publish('action', data)
 ```
 
-### Unsubscribe and stop the Redis connection
+### Unsubscribe and Stop the Redis Connection
 
 When you're done with streaming messages, you can unsubscribe from channels and stop the Redis connection:
 
@@ -58,7 +58,7 @@ await subscriber.unsubscribe()
 await redismb.stop()
 ```
 
-### Handle rejected messages
+### Handle Rejected Messages
 
 In case of rejected messages, you can read and reprocess them using the following methods:
 
