@@ -1,6 +1,6 @@
-# redis-message-broker
+# redismb
 
-Welcome to `redis-message-broker`! 🚀
+Welcome to `redismb`! 🚀
 
 This guide will help you get started with setting up a Redis message broker system using this powerful tool. Below are step-by-step instructions on initializing the Redis connection, creating subscribers and publishers, handling rejected messages, and more.
 
@@ -9,22 +9,22 @@ This guide will help you get started with setting up a Redis message broker syst
 
 ## Installation
 
-First, make sure you have Node.js installed on your machine. You can install the `redis-message-broker` library using npm:
+First, make sure you have Node.js installed on your machine. You can install the `redismb` library using npm:
 
 ```bash
-npm install redis-message-broker
+npm install redismb
 ```
 
 ## Getting Started
 
-Now let's dive into how you can use the `redis-message-broker` library in your Node.js applications.
+Now let's dive into how you can use the `redismb` library in your Node.js applications.
 
 ### Initialize the Redis Connection
 
 To start using the library, you need to initialize the Redis connection. Here's how you can do it:
 
 ```javascript
-import redismb, { Subscriber, Publisher } from 'redis-message-broker'
+import redismb, { Subscriber, Publisher } from 'redismb'
 await redismb.bootstrap('redis://localhost:6379')
 ```
 
@@ -78,4 +78,4 @@ Parameters:
 
 ## Conclusion
 
-That's it! You've learned how to set up a Redis message broker system using the `redis-message-broker` library. Feel free to explore more features and customize it according to your project's needs. Happy messaging! 📨
+That's it! You've learned how to set up a Redis message broker system using the `redismb` library. Feel free to explore more features and customize it according to your project's needs. Happy messaging! 📨
