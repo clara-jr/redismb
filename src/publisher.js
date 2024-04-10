@@ -27,7 +27,6 @@ export default class Publisher {
   publish = async (action, data) => {
     if (!redis) throw new Error('REDIS_CONNECTION', 'No redis connection has been established');
 
-    data = JSON.stringify(data);
     const id = await redis.xadd(
       this.channel,
       'MAXLEN',
@@ -41,7 +40,7 @@ export default class Publisher {
       // so that the new entry will be added exactly with the specified ID.
       '*',
       action,
-      data
+      JSON.stringify(data)
     );
 
     this.#logMessageStatus('PUBLISHED', { channel: this.channel, action, id });

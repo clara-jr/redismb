@@ -124,6 +124,8 @@ export default class Subscriber {
         `Consumer ${this.clientId} has been removed from consumer group ${this.group} in channel ${channel}.`
       );
     }
+
+    return { channels: this.channels, result: 'OK' };
   };
 
   /**
@@ -150,7 +152,7 @@ export default class Subscriber {
       if (!this.continueReading) return;
       await this.#readMessages(callback);
       await this.#readPendingMessages(callback);
-      this._recursiveCall(callback);
+      _recursiveCall(callback);
     };
     try {
       console.info(`Client ${this.clientId} connecting to ${this.channels} channel for Continual Read`);
@@ -166,7 +168,7 @@ export default class Subscriber {
    * @param {function} callback Processing message callback.
    */
   #readMessages = async (callback) => {
-    const channels = await redis.xreadgroup(
+    const streams = await redis.xreadgroup(
       'GROUP',
       this.group,
       this.clientId,
@@ -188,9 +190,10 @@ export default class Subscriber {
       ...this.channels.map(() => '>')
     );
 
-    if (channels) {
-      for (const channel of channels) {
-        const messages = channel[1];
+    if (streams) {
+      for (const stream of streams) {
+        const channel = stream[0];
+        const messages = stream[1];
         if (messages) {
           const parsedMessages = this.#parseMessages(messages);
           const { receive, skip } = this.#filterMessages(parsedMessages);

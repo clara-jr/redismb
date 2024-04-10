@@ -1,0 +1,22 @@
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20.11.0'
+    - name: Setup redis
+      uses: supercharge/redis-github-action@1.7.0
+      with:
+        redis-version: '6'
+    - name: Install dependencies
+      run: npm install
+    - name: Lint Code
+      run: npm run lint
+    - name: Run Tests
+      run: npm test
