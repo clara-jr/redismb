@@ -5,12 +5,14 @@
   "keywords": [
     "redis",
     "streams",
+    "redis-streams",
     "events",
     "messages",
     "queue",
     "consumer",
     "publisher",
-    "microservices"
+    "microservices",
+    "event-driven-architecture"
   ],
   "repository": {
     "type": "git",
