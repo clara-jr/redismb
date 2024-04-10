@@ -3,8 +3,8 @@ import Redis from 'ioredis';
 import redismb from '../src/redismb.js';
 
 describe('Redis Client Functions', () => {
-  afterEach(() => {
-    redismb.stop();
+  afterEach(async () => {
+    await redismb.stop();
   });
 
   describe('bootstrap', () => {
@@ -46,7 +46,7 @@ describe('Redis Client Functions', () => {
         'action',
         JSON.stringify({ foo: 'bar' }),
         'group',
-        'channel'
+        'redismb-channel'
       );
     });
     afterEach(async () => {
@@ -59,7 +59,7 @@ describe('Redis Client Functions', () => {
       expect(result.messages[0].action).to.equal('action');
       expect(result.messages[0].data.foo).to.equal('bar');
       expect(result.messages[0].group).to.equal('group');
-      expect(result.messages[0].channel).to.equal('channel');
+      expect(result.messages[0].channel).to.equal('redismb-channel');
       expect(result.count).to.be.a('number');
       expect(result.count).to.equal(1);
     });
@@ -76,7 +76,7 @@ describe('Redis Client Functions', () => {
         'action',
         JSON.stringify({ foo: 'bar' }),
         'group',
-        'channel'
+        'redismb-channel'
       );
     });
     it('should reprocess rejected messages', async () => {
@@ -86,17 +86,17 @@ describe('Redis Client Functions', () => {
       expect(result.succeeded[0].action).to.equal('action');
       expect(result.succeeded[0].data.foo).to.equal('bar');
       expect(result.succeeded[0].group).to.equal('group');
-      expect(result.succeeded[0].channel).to.equal('channel');
+      expect(result.succeeded[0].channel).to.equal('redismb-channel');
       expect(result.failed).to.be.an('array');
       expect(result.failed).to.have.lengthOf(0);
 
-      const messages = await redis.xrange('channel', '-', '+');
+      const messages = await redis.xrange('redismb-channel', '-', '+');
       expect(messages).to.have.lengthOf(1);
       await Promise.all(messages.map(async (message) => {
         expect(message[1][0]).to.equal('action');
         expect(JSON.parse(message[1][1]).foo).to.equal('bar');
         expect(message[1][3]).to.equal('group');
-        await redis.xdel('channel', message[0]);
+        await redis.xdel('redismb-channel', message[0]);
       }));
       const rejections = await redis.xrange('rejections', '-', '+');
       expect(rejections).to.have.lengthOf(0);

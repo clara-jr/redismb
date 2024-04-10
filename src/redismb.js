@@ -39,7 +39,11 @@ async function bootstrap (redisUri, ttl = 30) {
  * Terminate redis connection.
  */
 async function stop () {
-  if (redis) return await redis.quit();
+  if (redis) {
+    const result = await redis.quit();
+    redis = null;
+    return result;
+  }
 }
 
 /**
@@ -160,9 +164,9 @@ async function _readRejectedMessages ({ id, all, from, to }) {
 }
 
 export default {
-  redis,
   bootstrap,
   stop,
   reprocessRejectedMessages,
   readRejectedMessages
 };
+export { redis };
