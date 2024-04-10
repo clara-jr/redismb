@@ -80,8 +80,6 @@ describe('Redis Client Functions', () => {
       );
     });
     it('should reprocess rejected messages', async () => {
-      const redisUri = 'redis://localhost:6379';
-      await redismb.bootstrap(redisUri);
       const result = await redismb.reprocessRejectedMessages({ all: true });
       expect(result.succeeded).to.be.an('array');
       expect(result.succeeded).to.have.lengthOf(1);
