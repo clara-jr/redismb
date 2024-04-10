@@ -335,7 +335,9 @@ export default class Subscriber {
     Promise.all(
       messages.map((message) => {
         this.#logMessageStatus('RECEIVED', { channel, action: message.action, id: message.id });
-        return callback({ channel, ...message })
+        let result = callback({ channel, ...message });
+        if (!(result instanceof Promise)) result = Promise.resolve(result);
+        return result
           .then(() => this.#ackMessages(channel, [message], 'CONFIRMED'))
           .catch((err) => {
             this.logEventError(err, channel, message);
