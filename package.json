@@ -12,7 +12,7 @@
     "publisher",
     "microservices"
   ],
-  "license": "ISC",
+  "license": "MIT",
   "author": "Clara Jiménez Recio",
   "type": "module",
   "main": "index.js",
