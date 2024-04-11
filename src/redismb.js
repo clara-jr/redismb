@@ -48,13 +48,12 @@ async function stop () {
 
 /**
  * Reads rejected messages based on specified criteria (IDs, time range, and optionally filtered by action).
- * If 'all' flag is set to true, reads all rejected messages.
+ * If no filter-parameter is defined, reads all rejected messages.
  *
  * @param {string[]} [ids]               Array of message IDs to read.
  * @param {Date} [from]                  Start date/time for time range query.
  * @param {Date} [to]                    End date/time for time range query.
  * @param {string} [action]              Action type to filter messages.
- * @param {boolean} [all]                Flag to read all rejected messages.
  *
  * @returns {Promise<{ messages: {
  *    id:string,
@@ -64,14 +63,14 @@ async function stop () {
  *    channel:string,
  *  }[], count: number }>} Promise object representing the result, containing an array of messages and their count.
  */
-async function readRejectedMessages ({ ids, from, to, action, all }) {
+async function readRejectedMessages ({ ids, from, to, action } = {}) {
   if (!redis) throw new Error('REDIS_CONNECTION', 'No redis connection has been established');
 
   let messages = [];
 
   if (ids?.length) messages = await _readRejectedMessagesByIds(ids);
   else if (!!from && !!to) messages = await _readRejectedMessagesByTimeRange(from, to);
-  else if (all) messages = await _readAllRejectedMessages();
+  else messages = await _readAllRejectedMessages();
 
   if (action) messages = messages.filter((event) => event.action === action);
 
@@ -88,18 +87,16 @@ async function readRejectedMessages ({ ids, from, to, action, all }) {
  *  data:object|undefined,
  *  group:string|undefined,
  *  channel:string|undefined
- * }]} [messages]                           Array of messages to reprocess (and overwrite current messages).
+ * }]} [messages]                          Array of messages to overwrite current messages.
  * @param {string[]} [ids]                 Array of message IDs to reprocess.
  * @param {Date} [from]                    Start date/time for time range query.
  * @param {Date} [to]                      End date/time for time range query.
  * @param {string} [action]                Action type to filter messages.
- * @param {boolean} [all]                  Flag to reprocess all rejected messages.
  *
  * @returns {Promise<{ succeeded: Array, failed: Array }>} Promise object representing the result, containing arrays of succeeded and failed messages.
  */
-async function reprocessRejectedMessages ({ messages, ids, from, to, action, all }) {
-  ids = ids || messages?.map(({ id }) => id);
-  const { messages: messagesToReprocess } = await readRejectedMessages({ ids, from, to, action, all });
+async function reprocessRejectedMessages ({ messages, ids, from, to, action } = {}) {
+  const { messages: messagesToReprocess } = await readRejectedMessages({ ids, from, to, action });
   const succeeded = [];
   const failed = [];
 
@@ -142,15 +139,15 @@ async function _readRejectedMessagesByTimeRange (from, to) {
 }
 
 async function _readAllRejectedMessages () {
-  return await _readRejectedMessages({ all: true });
+  return await _readRejectedMessages();
 }
 
-async function _readRejectedMessages ({ id, all, from, to }) {
+async function _readRejectedMessages ({ id, from, to } = {}) {
   let params = [];
 
   if (id) params = [id, id];
   else if (!!from && !!to) params = [from, to];
-  else if (all) params = ['-', '+'];
+  else params = ['-', '+'];
 
   const records = await redis.xrange('rejections', ...params);
 

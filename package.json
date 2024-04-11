@@ -1,6 +1,6 @@
 {
   "name": "redismb",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Simplifying microservices communication with efficient event-driven architecture powered by Redis Streams",
   "keywords": [
     "redis",

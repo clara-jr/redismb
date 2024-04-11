@@ -53,7 +53,7 @@ describe('Redis Client Functions', () => {
       await redis.xdel('rejections', message);
     });
     it('should read rejected messages based on specified criteria', async () => {
-      const result = await redismb.readRejectedMessages({ all: true });
+      const result = await redismb.readRejectedMessages();
       expect(result.messages).to.be.an('array');
       expect(result.messages).to.have.lengthOf(1);
       expect(result.messages[0].action).to.equal('action');
@@ -80,7 +80,7 @@ describe('Redis Client Functions', () => {
       );
     });
     it('should reprocess rejected messages', async () => {
-      const result = await redismb.reprocessRejectedMessages({ all: true });
+      const result = await redismb.reprocessRejectedMessages();
       expect(result.succeeded).to.be.an('array');
       expect(result.succeeded).to.have.lengthOf(1);
       expect(result.succeeded[0].action).to.equal('action');

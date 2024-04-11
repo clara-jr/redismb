@@ -14,7 +14,7 @@ This guide will help you get started with setting up a Redis message broker syst
 
 ## Installation
 
-First, make sure you have Node.js installed on your machine. You can install the `redismb` library using npm:
+You can install the `redismb` library using npm:
 
 ```bash
 npm install redismb
@@ -35,7 +35,7 @@ await redismb.bootstrap('redis://localhost:6379');
 
 ### Create a Subscriber
 
-Subscribers listen for messages on specific channels and consume them. You can create a subscriber instance like this:
+Subscribers listen for messages on specific channels and consume them while assigned to a consumer group. You can create a subscriber instance like this:
 
 ```javascript
 const subscriber = new Subscriber({ channels: ['channel'], group: 'group' });
@@ -68,8 +68,8 @@ await redismb.stop();
 In case of rejected messages, you can read and reprocess them using the following methods:
 
 ```javascript
-await redismb.readRejectedMessages({ ids, from, to, action, all });
-await redismb.reprocessRejectedMessages({ messages, ids, from, to, action, all });
+await redismb.readRejectedMessages({ ids, from, to, action });
+await redismb.reprocessRejectedMessages({ messages, ids, from, to, action });
 ```
 
 Parameters:
@@ -78,13 +78,15 @@ Parameters:
 - `from` (optional): The start date from which to filter rejected messages.
 - `to` (optional): The end date until which to filter rejected messages.
 - `action` (optional): Parameter used to filter rejected messages by a specific `action`.
-- `all` (optional): A boolean to indicate if all rejected messages should be retrieved.
-- `messages`(optional): Array of objects with optional properties: `channel`, `group`, and `data`. These properties are intended to republish the rejected messages to a different channel than they had, to a different consumer group from the one that revoked them, or with new properties in the data.
+
+If none of the previous parameters are defined, all messages will be retrieved.
+
+- `messages`(optional): Array of objects with optional properties: `id`, `channel`, `group`, and `data`. These properties are intended to republish the rejected messages (filtered by the previous parameters) to a different channel than they had, to a different consumer group from the one that revoked them, or with new properties in the data object.
 
 ## Conclusion
 
 That's it! You've learned how to set up a Redis message broker system using the `redismb` library. Feel free to explore more features and customize it according to your project's needs.
 
-You can find also [here](https://lp.redislabs.com/rs/915-NFD-128/images/DS-Redis-Streams.pdf) a cool cheatsheet ❤️ about Redis Streams.
+You can also find [here](https://lp.redislabs.com/rs/915-NFD-128/images/DS-Redis-Streams.pdf) a cool cheatsheet ❤️ about Redis Streams.
 
 Happy messaging! 📨
