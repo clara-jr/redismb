@@ -14,9 +14,13 @@
     "microservices",
     "event-driven-architecture"
   ],
+  "homepage": "https://github.com/clara-jr/redismb#readme",
+  "bugs": {
+    "url": "https://github.com/clara-jr/redismb/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/clara-jr/redismb.git"
+    "url": "git+https://github.com/clara-jr/redismb.git"
   },
   "license": "MIT",
   "author": "Clara Jiménez Recio",
