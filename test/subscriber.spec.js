@@ -1,7 +1,11 @@
+import * as chai from 'chai';
 import { expect } from 'chai';
 import { stub, spy, assert } from 'sinon';
+import sinonChai from 'sinon-chai';
+
 import redismb from '../src/redismb.js';
 import Subscriber from '../src/subscriber.js';
+chai.use(sinonChai);
 
 describe('Redis Subscriber', () => {
   let redis;
@@ -74,33 +78,117 @@ describe('Redis Subscriber', () => {
     const _sleep = (ms) => {
       return new Promise((resolve) => setTimeout(resolve, ms));
     };
-    beforeEach(async () => {
-      id = await redis.xadd(
-        'channel',
-        'MAXLEN',
-        '~',
-        10,
-        '*',
-        'action',
-        JSON.stringify({ foo: 'bar' })
-      );
-      callback = stub().resolves();
-      spy(callback);
+    describe('when callback resolves', () => {
+      beforeEach(async () => {
+        id = await redis.xadd(
+          'channel',
+          'MAXLEN',
+          '~',
+          10,
+          '*',
+          'action',
+          JSON.stringify({ foo: 'bar' })
+        );
+        callback = stub().resolves();
+        spy(callback);
+      });
+      afterEach(async () => {
+        await redis.xdel('channel', id);
+        await redis.xgroup('DESTROY', 'channel', 'group');
+      });
+      it('should subscribe to streaming messages', async () => {
+        const subscriber = new Subscriber({ channels: ['channel'], group: 'group' });
+        subscriber.subscribe(callback);
+        await _sleep(1000); // Wait for messages to be processed
+        assert.calledOnce(callback);
+        const [payload] = callback.args[0];
+        expect(payload.channel).to.equal('channel');
+        expect(payload.action).to.equal('action');
+        expect(payload.data.foo).to.equal('bar');
+        expect(payload.id).to.equal(id);
+      });
     });
-    afterEach(async () => {
-      await redis.xdel('channel', id);
-      await redis.xgroup('DESTROY', 'channel', 'group');
+    describe('when callback rejects', () => {
+      let logEventError, logEventErrorSpy;
+      beforeEach(async () => {
+        id = await redis.xadd(
+          'channel',
+          'MAXLEN',
+          '~',
+          10,
+          '*',
+          'action',
+          JSON.stringify({ foo: 'bar' })
+        );
+        callback = stub().rejects();
+        spy(callback);
+        logEventError = (err, channel, message) => {
+          console.error(err);
+          expect(channel).to.equal('channel');
+          expect(message.action).to.equal('action');
+          expect(message.data.foo).to.equal('bar');
+          expect(message.id).to.equal(id);
+        };
+        logEventErrorSpy = spy(logEventError);
+      });
+      afterEach(async () => {
+        await redis.xdel('channel', id);
+        await redis.xgroup('DESTROY', 'channel', 'group');
+      });
+      it('should subscribe to streaming messages and call logEventError', async () => {
+        const subscriber = new Subscriber({ channels: ['channel'], group: 'group' }, logEventErrorSpy);
+        subscriber.subscribe(callback);
+        await _sleep(1000); // Wait for messages to be processed
+        assert.calledOnce(callback);
+        const [payload] = callback.args[0];
+        expect(payload.channel).to.equal('channel');
+        expect(payload.action).to.equal('action');
+        expect(payload.data.foo).to.equal('bar');
+        expect(payload.id).to.equal(id);
+        /* eslint-disable */
+        expect(logEventErrorSpy).to.have.been.calledOnce;
+      });
     });
-    it('should subscribe to streaming messages', async () => {
-      const subscriber = new Subscriber({ channels: ['channel'], group: 'group' });
-      subscriber.subscribe(callback);
-      await _sleep(1000); // Wait for messages to be processed
-      assert.calledOnce(callback);
-      const [payload] = callback.args[0];
-      expect(payload.channel).to.equal('channel');
-      expect(payload.action).to.equal('action');
-      expect(payload.data.foo).to.equal('bar');
-      expect(payload.id).to.equal(id);
+    describe('when callback throws sync exception', () => {
+      let logEventError, logEventErrorSpy;
+      beforeEach(async () => {
+        id = await redis.xadd(
+          'channel',
+          'MAXLEN',
+          '~',
+          10,
+          '*',
+          'action',
+          JSON.stringify({ foo: 'bar' })
+        );
+        callback = stub().throws(new Error('Oops! Something went wrong.'))
+        spy(callback);
+        logEventError = (err, channel, message) => {
+          console.error(err);
+          expect(channel).to.equal('channel');
+          expect(message.action).to.equal('action');
+          expect(message.data.foo).to.equal('bar');
+          expect(message.id).to.equal(id);
+        };
+        logEventErrorSpy = spy(logEventError);
+      });
+      afterEach(async () => {
+        await redis.xdel('channel', id);
+        await redis.xgroup('DESTROY', 'channel', 'group');
+      });
+      it('should subscribe to streaming messages and call logEventError', async () => {
+        const subscriber = new Subscriber({ channels: ['channel'], group: 'group' }, logEventErrorSpy);
+        subscriber.subscribe(callback);
+        await _sleep(1000); // Wait for messages to be processed
+        assert.calledOnce(callback);
+        const [payload] = callback.args[0];
+        expect(payload.channel).to.equal('channel');
+        expect(payload.action).to.equal('action');
+        expect(payload.data.foo).to.equal('bar');
+        expect(payload.id).to.equal(id);
+        /* eslint-disable */
+        expect(logEventErrorSpy).to.have.been.calledOnce;
+      });
     });
   });
 

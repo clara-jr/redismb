@@ -46,7 +46,8 @@
     "eslint-plugin-n": "^16.6.2",
     "eslint-plugin-promise": "^6.1.1",
     "mocha": "^10.4.0",
-    "sinon": "^17.0.1"
+    "sinon": "^17.0.1",
+    "sinon-chai": "^3.7.0"
   },
   "engines": {
     "node": ">=20.11.0",

@@ -335,13 +335,19 @@ export default class Subscriber {
     Promise.all(
       messages.map((message) => {
         this.#logMessageStatus('RECEIVED', { channel, action: message.action, id: message.id });
-        let result = callback({ channel, ...message });
-        if (!(result instanceof Promise)) result = Promise.resolve(result);
-        return result
-          .then(() => this.#ackMessages(channel, [message], 'CONFIRMED'))
-          .catch((err) => {
-            this.logEventError(err, channel, message);
-          });
+        try {
+          let result = callback({ channel, ...message });
+          if (!(result instanceof Promise)) result = Promise.resolve(result);
+          return result
+            .then(() => this.#ackMessages(channel, [message], 'CONFIRMED'))
+            .catch((err) => {
+              // callback throws async exception
+              this.logEventError(err, channel, message);
+            });
+        } catch (err) {
+          // callback throws sync exception
+          return this.logEventError(err, channel, message);
+        }
       })
     );
   };
