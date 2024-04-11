@@ -2,7 +2,7 @@
 
 Welcome to `redismb`! 🚀
 
-This guide will help you get started with setting up a Redis message broker system using this powerful tool. Below are step-by-step instructions on initializing the Redis connection, creating subscribers and publishers, handling rejected messages, and more.
+This guide will help you get started with setting up a Redis message broker system based on [Redis Streams](https://redis.io/docs/latest/develop/data-types/streams/) using this powerful tool. Below are step-by-step instructions on initializing the Redis connection, creating subscribers and publishers, handling rejected messages, and more.
 
 > [!NOTE]
 > Make sure to replace placeholders such as `'channel'`, `'group'`, `'action'`, and `data` with your actual channel names, consumer groups, actions, and data objects.
@@ -78,4 +78,8 @@ Parameters:
 
 ## Conclusion
 
-That's it! You've learned how to set up a Redis message broker system using the `redismb` library. Feel free to explore more features and customize it according to your project's needs. Happy messaging! 📨
+That's it! You've learned how to set up a Redis message broker system using the `redismb` library. Feel free to explore more features and customize it according to your project's needs.
+
+You can find also [here](https://lp.redislabs.com/rs/915-NFD-128/images/DS-Redis-Streams.pdf) a cool cheatsheet ❤️ about Redis Streams.
+
+Happy messaging! 📨
