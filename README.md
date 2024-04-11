@@ -1,5 +1,10 @@
 # redismb
 
+[![npm](https://img.shields.io/npm/dt/redismb)](https://www.npmjs.com/package/redismb)
+[![npm](https://img.shields.io/npm/dw/redismb)](https://www.npmjs.com/package/redismb)
+[![GitHub license](https://img.shields.io/github/license/clara-jr/redismb)](https://github.com/clara-jr/redismb/blob/master/LICENSE)
+[![npm](https://img.shields.io/npm/v/redismb)](https://www.npmjs.com/package/redismb)
+
 Welcome to `redismb`! 🚀
 
 This guide will help you get started with setting up a Redis message broker system based on [Redis Streams](https://redis.io/docs/latest/develop/data-types/streams/) using this powerful tool. Below are step-by-step instructions on initializing the Redis connection, creating subscribers and publishers, handling rejected messages, and more.
@@ -24,8 +29,8 @@ Now let's dive into how you can use the `redismb` library in your Node.js applic
 To start using the library, you need to initialize the Redis connection. Here's how you can do it:
 
 ```javascript
-import redismb, { Subscriber, Publisher } from 'redismb'
-await redismb.bootstrap('redis://localhost:6379')
+import redismb, { Subscriber, Publisher } from 'redismb';
+await redismb.bootstrap('redis://localhost:6379');
 ```
 
 ### Create a Subscriber
@@ -33,10 +38,10 @@ await redismb.bootstrap('redis://localhost:6379')
 Subscribers listen for messages on specific channels and consume them. You can create a subscriber instance like this:
 
 ```javascript
-const subscriber = new Subscriber({ channels: ['channel'], group: 'group' })
+const subscriber = new Subscriber({ channels: ['channel'], group: 'group' });
 subscriber.subscribe(async ({ channel, action, data, id }) => {
   // Process the received message...
-})
+});
 ```
 
 ### Create a Publisher
@@ -44,9 +49,9 @@ subscriber.subscribe(async ({ channel, action, data, id }) => {
 Publishers send messages to specific channels. Here's how you can create a publisher instance and publish a message:
 
 ```javascript
-const publisher = new Publisher({ channel: 'channel' })
+const publisher = new Publisher({ channel: 'channel' });
 const data = { foo: 'bar' };
-await publisher.publish('action', data)
+await publisher.publish('action', data);
 ```
 
 ### Unsubscribe and Stop the Redis Connection
@@ -54,8 +59,8 @@ await publisher.publish('action', data)
 When you're done with streaming messages, you can unsubscribe from channels and stop the Redis connection:
 
 ```javascript
-await subscriber.unsubscribe()
-await redismb.stop()
+await subscriber.unsubscribe();
+await redismb.stop();
 ```
 
 ### Handle Rejected Messages
@@ -63,8 +68,8 @@ await redismb.stop()
 In case of rejected messages, you can read and reprocess them using the following methods:
 
 ```javascript
-await redismb.readRejectedMessages({ ids, from, to, action, all })
-await redismb.reprocessRejectedMessages({ messages, ids, from, to, action, all })
+await redismb.readRejectedMessages({ ids, from, to, action, all });
+await redismb.reprocessRejectedMessages({ messages, ids, from, to, action, all });
 ```
 
 Parameters:
